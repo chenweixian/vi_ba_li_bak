@@ -1,0 +1,24 @@
+1.gdb调试时可以查看源代码，是因为会记录源代码的目录，如果找不到源代码，则会在当前的目录找源代码。也可以手动指定源码的路径。
+  如果调试的环境没有源码，则需要把源码copy过去。
+  
+2.调试
+    gdb [options] [executable-file [core-file or process-id]]
+    gdb [options] --args executable-file [inferior-arguments ...]
+
+3.常用命令
+   调试coredump：
+    bt(backtrace) :当前函数栈帧   
+	f(frame) num :选择栈帧
+    p(print) valName:打印变量值
+    i(info) locals:查看当前栈帧的所有局部变量的值
+	i(info) registers:显示所有寄存器的值
+    l(list) 行号或者函数名：列出源码
+    
+   调试代码：
+   start:开始调试
+   r(run):重头开始连续执行
+   b(break):行号或者函数名：设置断点
+   s(step):单步执行
+      
+	 
+   

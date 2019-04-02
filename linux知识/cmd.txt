@@ -1,0 +1,132 @@
+1.查找某个路径下哪个文件里有这个字符串
+>>find /etc -name “*” | xargs grep -s “hello abcserver”
+
+2.查找进程名为syslgd占用的端口号 （-p的参数是打印进程名）
+>>netstat -anp | grep syslog
+udp        0      0 0.0.0.0:514                 0.0.0.0:*                               31483/syslogd
+
+3.查找端口号为514被谁占用了
+>>netstat -anp | grep 514
+udp        0      0 0.0.0.0:514                 0.0.0.0:*                               31483/syslogd 
+或者用lsof:
+lsof -i:514
+
+lsof -i | grep pid
+
+4.查找进程号为4950的进程信息：
+>>ps aux| grep 4950  （aux参数：显示当前所有进程的信息，包括pid，cpu内存使用率）
+USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+chenwei+   4995  0.0  0.0  21312   968 pts/4    S+   23:33   0:00 grep --color=auto 4950
+
+或者用top查看：
+top -H -p 4950
+
+>>ps -ef | grep nginx | wc -l
+查看nginx的进程数
+ps aux和ps -ef的一个区别是显示进程名是，前者会截断，例如进程/bmrt/blaph/blaph/bmgctl来启动进程，由于ps aux是用BSD格式来显示结果，所以可能只会显示到/bmrt/blaph/blap，后面的都被截掉了
+这样用grep bmgctl时可能就会误伤
+
+查看进程7735的线程信息：
+>>ps -Tfp7735   (T是开启线程，p是带上进程号)
+
+5.top ：动态显示当前的系统性能：cpu，内存，交换区等，每个进程资源使用的百分比
+>>top -Hp7735(查看进程7735的性能信息，H是开启线程)
+
+free：查看内存和交互区的信息
+
+6.tail -fn 20 log.log :持续输出log.log最后的20行
+
+7.alias ,永久有效的方式，例如：
+在~/.bashrc添加ctags的别名：
+alias tags='ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++'
+再source ~/.bashrc 使其立即生效
+
+
+8.检查服务器的连接信息和连接数（当然是长连接才有作用）,下面以redis为例
+>>netstat -nap | grep redis
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:6379          0.0.0.0:*               LISTEN      7735/redis-server 1  
+tcp        0      0 127.0.0.1:6379          127.0.0.1:52256         ESTABLISHED 7735/redis-server 1
+tcp        0      0 127.0.0.1:6379          127.0.0.1:52260         ESTABLISHED 7735/redis-server 1  
+tcp        0      0 127.0.0.1:6379          127.0.0.1:52174         ESTABLISHED 7735/redis-server 1
+Foreign Address是远端的地址和端口，这里即连上来的客户端地址
+可以看到127.0.0.1:6379处于LISTEN(监听)状态，同时也有三个客户端连接上来,而且都处于正常连接状态(ESTABLISHED)
+
+>>netstat -nap|grep redis|grep ESTABLISHED
+可以查看连接上redies的处于ESTABLISHED的所有连接
+
+>>netstat -nap|grep redis|grep ESTABLISHED |wc -l
+直接给出处于ESTABLISHED的连接统计数，例如这里直接输出:3  ,即有三个连接
+
+>>netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+这条命令能统计出TCP各个连接状态的统计：
+LAST_ACK 5
+SYN_RECV 30
+ESTABLISHED 1597
+FIN_WAIT1 51
+FIN_WAIT2 504
+TIME_WAIT 1057
+
+另外，没有统计出LISTEN状态的数量，要加上-an才有
+
+9.查看软件安装路径：whereis
+>>whereis git
+git: /usr/bin/git /usr/share/man/man1/git.1.gz
+如上，会显示可执行文件路径，配置，man文件等的路径
+如果只想知道执行文件路径，则可用:
+>>which git
+/usr/bin/git
+
+10.find，which，whereis，locate比较
+which:根据PATH环境变量依次查找能够匹配的可执行文件名(是可执行文件，普通文件不会被找到)
+whereis：只能用于程序名的搜索，而且只能搜索二进制个文件(-b),man文件(-m) 源码文件(-s),如果省略参数，则返回所有信息
+locate：相当于find -name,但比find块，因为它是从数据库中查找的（/var/lib/locatedb）,linux自动创建这个数据库，并每天更新一次，也可以自己手动更新一下：updatedb
+find：最常见的查找命令，可以根据文件名，文件属性，修改时间等查找文件。
+
+11.telnet查看远程端口是否开放
+telnet 192.168.46.208 9092
+如果出现Connected表示连通了:
+Trying 192.168.46.208...
+Connected to 192.168.46.208.
+Escape character is '^]'.
+
+否则会一直显示trying中：
+Trying 123.125.115.110...
+
+
+12.grep 或  :grep -E "793|1120" my.log > tmp.log
+   grep 且  :grep "793" my.log | grep "1120" >tmp.log
+
+
+13.  ps -ef 或者ps aux 看进程的启动时间时，如果是在24小时前，只能看到天数
+     要想看到具体的启动时间，可以用下面的命名
+	 ps -eo pid,lstart,etime | grep 5359    (最后的5359是进程id)
+	 结果显示如下：
+	5359     Tue Sep 16 14:47:22 2014       00:43
+   (进程id)   (启动时间)                     （持续的时间）
+	
+14.查找a-z,1-9开头的文件
+find . -name "[a-z |1-9]*" -type f
+
+15.全局替换
+    sed -i "s/hello/hai/g" `find ./ -name "*.c"`
+
+16.查看当前目录下文件大小
+du -sh *	
+
+17.grep 重定向输出到文件时，如果设置了grep的输出控制格式，则输出到文件看起来像乱码，可以在bashrc设置成这样：
+export GREP_OPTIONS='--color=auto'
+这里用到grep的一个参数--color，color有三个值供选择：never、always、auto。always和auto的区别就是，always会在任何情况下都给匹配字段加上颜色标记，当通过管道或重定向时就会多出一些控制字符，结果会变成
+export ^[[1;32m^[[KGREP^[[m^[[K_OPTIONS='--color=always'
+export ^[[1;32m^[[KGREP^[[m^[[K_COLOR='1;32'
+而auto则只在输出到终端时才加上这些终端控制码
+	
+18 pwdx 根据进程id查找进程的工作目录
+除了这个，也可以在/proc/进程号目录下查看，例如1625进程：
+cd /proc/1625/   ls -al 可以看到cwd项链接到进程的具体工作目录下
+
+
+
+
+
+	
