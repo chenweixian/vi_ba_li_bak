@@ -122,7 +122,7 @@ alias ll="ls -rl"
 alias tags="ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++"
 export LANG=zh_CN.UTF-8
 #alias fall="find ./ -name \"*\" |xargs grep -sn"
-alias fall="grep -rsn --exclude=*.b --exclude=*.out --exclude=tags --exclude=*.swp --exclude=*.log"
+alias fall="grep -rsni --exclude=*.b --exclude=*.out --exclude=tags --exclude=*.swp --exclude=*.log"
 alias psef="ps -ef | grep"
-#export GREP_OPTIONS='--color=auto' GREP_COLOR='1;33'
+export GREP_OPTIONS='--color=auto' GREP_COLOR='1;33'
 export GREP_COLOR='1;33'

@@ -26,7 +26,7 @@ do
     if [ ! -f ./tags ];then
         generate_tags=1
     else
-        latest_update_file_info=`find $source_dirs -name "*.c" -o -name "*.h" | xargs -I{} stat -c "%Y" {} | sort -r | head -1`
+        latest_update_file_info=`find $source_dirs -name "*.c" -o -name "*.cpp" -o -name "*.h" | xargs -I{} stat -c "%Y" {} | sort -r | head -1`
 
         if [ -z "$latest_update_file_info" ];then
             log "Something is wrong. maybe directories are empty!"
