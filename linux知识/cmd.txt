@@ -52,6 +52,16 @@ tcp        0      0 127.0.0.1:6379          127.0.0.1:52174         ESTABLISHED 
 Foreign Address是远端的地址和端口，这里即连上来的客户端地址
 可以看到127.0.0.1:6379处于LISTEN(监听)状态，同时也有三个客户端连接上来,而且都处于正常连接状态(ESTABLISHED)
 
+也可以用lsof命名查看:
+lsof -i -Pn | grep 31048
+CardBlack 31048    root    8u  IPv4 787862657      0t0  TCP 127.0.0.1:13060 (LISTEN)
+CardBlack 31048    root    9u  IPv4 787862658      0t0  TCP 10.0.1.23:13060 (LISTEN)
+CardBlack 31048    root   12u  IPv4 787862245      0t0  TCP 10.0.1.23:40552->10.0.1.23:3306 (ESTABLISHED)
+CardBlack 31048    root   13u  IPv4 787864700      0t0  TCP 10.0.1.23:40196->10.0.1.23:3306 (ESTABLISHED)
+CardBlack 31048    root   14u  IPv4 787862226      0t0  TCP 10.0.1.23:40518->10.0.1.23:3306 (ESTABLISHED)
+CardBlack 31048    root   15u  IPv4 787864642      0t0  TCP 10.0.1.23:40134->10.0.1.23:3306 (ESTABLISHED)
+对于已经建立链接的能更清楚的看到哪边连哪边
+
 >>netstat -nap|grep redis|grep ESTABLISHED
 可以查看连接上redies的处于ESTABLISHED的所有连接
 
@@ -97,6 +107,9 @@ Trying 123.125.115.110...
 12.grep 或  :grep -E "793|1120" my.log > tmp.log
    grep 且  :grep "793" my.log | grep "1120" >tmp.log
 
+或且组合：
+grep "DbHandle.cpp" ETC.ETCPAccountCheckingServer.log | grep -E -i "ERROr|Warn" > 3.log
+grep -i是忽略大小写
 
 13.  ps -ef 或者ps aux 看进程的启动时间时，如果是在24小时前，只能看到天数
      要想看到具体的启动时间，可以用下面的命名
@@ -122,11 +135,56 @@ export ^[[1;32m^[[KGREP^[[m^[[K_COLOR='1;32'
 而auto则只在输出到终端时才加上这些终端控制码
 	
 18 pwdx 根据进程id查找进程的工作目录
+例如查看进程id为14113的当前工作目录：pwdx 14113
 除了这个，也可以在/proc/进程号目录下查看，例如1625进程：
 cd /proc/1625/   ls -al 可以看到cwd项链接到进程的具体工作目录下
 
+19.linux中几个关于进程的目录：
+/proc/pid   ：进程运行信息
+/proc/pid/fd :该目录下记录了进程打开的所有fd
+/proc/pid/maps:该文件记录了进程maps信息
+
+20.linux常用工具:
+gdb
+lsof:查看fd使用
+tcpdump:抓包工具
+ipcs  :报告进程间通信设施状态 –m 共享内存，-q 消息队列，-s 信号,-a 三者
+ipcrm –M(key)/-m(id) []，-Q/-q, -S/-s，移除进程间通信的消息对象
+strace:跟踪系统调用情况
+mtrace:定位内存泄漏
+valgrind:提供多个仿真调试工具集成，例如内存检测等
+
+strace简单的使用场景:
+例如程序输出错误日志找不到某个配置文件，但是又没有输出具体的错误文件位置，
+那么可以用strace执行这个程序，在系统调用open中可以看到具体的路径
 
 
+21.统计端口使用情况
+netstat -an|awk '/tcp/ {print $6}'|sort|uniq -c
+结果:
+2  CLOSE_WAIT
+96 ESTABLISHED
+24 LISTEN
+8  TIME_WAIT
 
 
+或者:netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+结果：
+CLOSE_WAIT 2
+ESTABLISHED 96
+TIME_WAIT 9
 	
+22.性能统计
+iostat -x 1 15   ：每秒采样一次，总共15次
+vmstat 1 12      : 每秒1次，采样12次
+top -d 1 -n 10   ：每秒1次，采样10次
+
+free：查看内存使用情况	
+	
+	
+23.git查看具体的提交
+   git log 文件/文件夹                              :查看某个文件/文件夹的提交日志
+   git d commitid_1 commitid_2 --stat 文件/文件夹   :查看某个文件/文件夹的两次提交修改了多少行，改了哪些文件
+   git d commitid_1 commitid_2 文件/文件夹          :查看某个文件/文件夹的两次提交具体的修改内容对比
+   以上的COMMIT_ID_X其实可以用HEAD[1]来代替，比如HEAD表示当前提交，HEAD^表示上一次提交,HEAD^^表示上上次提交。当前提交HEAD可以省略
+
