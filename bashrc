@@ -126,3 +126,5 @@ alias fall="grep -rsni --exclude=*.b --exclude=*.out --exclude=tags --exclude=*.
 alias psef="ps -ef | grep"
 export GREP_OPTIONS='--color=auto' GREP_COLOR='1;33'
 export GREP_COLOR='1;33'
+
+#export TERM='xterm-256color'
