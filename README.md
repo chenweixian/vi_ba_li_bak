@@ -21,4 +21,8 @@
                            Vundle文档:https://github.com/VundleVim/Vundle.vim/blob/master/README_ZH_CN.md
 						   //test1111
 						   //test444
+<<<<<<< HEAD
 						   //test666
+=======
+						   //test555
+>>>>>>> remotes/origin/master
