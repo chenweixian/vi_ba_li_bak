@@ -19,3 +19,4 @@
    用vim随便打开一个文件，执行:PluginInstall
    用的是Vundle来管理vim插件,Vundle:教程:https://www.jianshu.com/p/1839f1fb3f08
                            Vundle文档:https://github.com/VundleVim/Vundle.vim/blob/master/README_ZH_CN.md
+						   //test1111
