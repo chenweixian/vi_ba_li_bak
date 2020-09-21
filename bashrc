@@ -130,3 +130,4 @@ export GREP_COLOR='1;33'
 #export TERM='xterm-256color'
 
 #feature_2 add 1
+#feature_2 add 2
