@@ -128,3 +128,5 @@ export GREP_OPTIONS='--color=auto' GREP_COLOR='1;33'
 export GREP_COLOR='1;33'
 
 #export TERM='xterm-256color'
+
+#feature_2 add 1
