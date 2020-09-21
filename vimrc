@@ -239,3 +239,4 @@ set grepprg=grep\ -rsn\ --exclude=*.b\ --exclude=*.out\ --exclude=tags\ --exclud
 map<F6> <ESC>:set fdm=marker<CR>
 map<F7> <ESC>:set fdm=indent<CR>
 
+//feature add 1
