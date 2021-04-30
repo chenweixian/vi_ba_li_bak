@@ -19,10 +19,10 @@
    用vim随便打开一个文件，执行:PluginInstall
    用的是Vundle来管理vim插件,Vundle:教程:https://www.jianshu.com/p/1839f1fb3f08
                            Vundle文档:https://github.com/VundleVim/Vundle.vim/blob/master/README_ZH_CN.md
-						   //test1111
-						   //test444
-<<<<<<< HEAD
-						   //test666
-=======
-						   //test555
->>>>>>> remotes/origin/master
+
+5.samba安装
+https://www.cnblogs.com/kcxg/p/10892289.html
+然后要注意:
+(1)要讲用户添加到samba中:smbpasswd -a godman(godman是已有的用户,如果没有要重新创建)
+(2)防火墙要关掉
+(3)SELinux要关掉
